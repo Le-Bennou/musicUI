@@ -102,7 +102,7 @@
             var rad = Math.PI-(-135 + (c)/(10)*270)/180*Math.PI;
             led.css({'top':50+(Math.cos(rad)*50) +'%',
               'left':50+(Math.sin(rad)*50 )+'%' });
-            if(k.hasClass('simple')){
+            if(!k.hasClass('led')){
                 led.css('transform','translate(-50%,-50%) rotate('+(-rad)+'rad)');
                 if( c === 0 || c===10){
                   led.html('<i style="display:block;transform:translateY(7px) rotate('+rad+'rad) translateX(-3px)">'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
@@ -121,8 +121,58 @@
         _rangeEventListeners();
       }
 
-      function _initSelect(){
+      function _selectEvents(){
+        k.mUI.wrapper.bind('click.k',function(e){
+          e.preventDefault();
+          k.mUI.choice++;
+          k.mUI.choice = k.mUI.choice % k.mUI.options.length;
+          k.val(k.mUI.options[k.mUI.choice]);
+          $(k.find('option')[k.mUI.choice]).prop('selected',true);
+          k.trigger('change');
+          k.trigger('input');
+        })
+      }
 
+      function _selectUpdate(){
+        k.mUI.choice = k.find('option:selected').index();
+        var angle = Math.PI/4+Math.PI+Math.PI*2*k.mUI.choice/k.mUI.options.length;
+        k.mUI.button.css({'transform':'rotate('+angle+'rad)'});
+        k.mUI.grad.find('span').removeClass('active');
+        k.mUI.options[k.mUI.choice].dom.addClass('active');
+      }
+
+      function _initSelect(){
+        k.hide();
+        k.mUI.wrapper = $('<div class="mUI_wrapper mUI_knob mUI_select"></div>');
+        k.mUI.button = $('<div class="mUI_button"></div>');
+        k.mUI.grad = $('<div class="mUI_grad"></div>');
+        k.mUI.grad.addClass((k.hasClass('led')? 'led' : 'simple'));
+        k.mUI.wrapper.append(k.mUI.button);
+        k.mUI.wrapper.append(k.mUI.grad);
+        k.mUI.update = _selectUpdate;
+        k.after(k.mUI.wrapper);
+        k.mUI.options = [];
+        k.mUI.choice = 0;//TODO le choix fonction de l'option par defaut du HTML
+        var count = 0;
+        var nbTot = k.find('option').length;
+        var maxWidth = 0;
+        k.find('option').each(function(){
+          var dClass = (360*count/nbTot>=0 && 360*count/nbTot<=90 || 360*count/nbTot>270)? 'left' : 'right';
+          dClass += (360*count/nbTot>0 && 360*count/nbTot<=180)? ' bottom' : ' top';
+          k.mUI.options.push({name:$(this).html(), value : $(this).attr('value'),dom:$('<span><i class="'+dClass+'">'+$(this).html()+'</i><span>')});
+          var d = k.mUI.options[k.mUI.options.length-1].dom;
+          if(!k.hasClass('led')){
+              d.css('transform','translate(-50%,-50%) rotate('+(Math.PI/2+Math.PI*2*count/nbTot)+'rad)');
+              d.find('i').css({'transform':'rotate('+(-Math.PI/2-Math.PI*2*count/nbTot)+'rad)'})
+            }
+          k.mUI.grad.append(d);
+            d.css({'left':50+Math.cos(Math.PI*2*count/nbTot)*50+'%',
+        'top':50+Math.sin(Math.PI*2*count/nbTot)*50+'%'});
+        count++;
+
+        });
+        _eventListeners();
+        _selectEvents();
       }
 
       function _buttonUpdate(){

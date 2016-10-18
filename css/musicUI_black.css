@@ -405,3 +405,47 @@ body{
   text-shadow:0 0 13px #b6ddfe;
   color:#b6ddfe;
 }
+
+/********
+  Select
+    led
+  */
+  .mUI_select .mUI_grad.simple span i {
+    position:absolute;
+    color:hsl(0,0%,60%);
+    white-space: nowrap;
+    font-size:8px;
+    padding:2px;
+  }
+
+  .mUI_select .mUI_grad.led span i {
+    position:absolute;
+    color:black;
+    text-shadow:0 0 13px #b6ddfe;
+    white-space: nowrap;
+    font-size:8px;
+    padding:2px;
+    text-shadow:1px 1px 0px rgba(55,55,55,1),
+    -1px -1px 2px rgba(0,0,0,0.1);
+  }
+
+  .mUI_select .mUI_grad.led span.active i {
+    color:#b7efff;
+    text-shadow:0 0 13px #b6ddfe;
+  }
+
+  .mUI_select .mUI_grad.led span i.right{
+    right:100%;
+  }
+
+  .mUI_select .mUI_grad.led span i.top{
+    bottom:100%;
+  }
+
+  .mUI_select .mUI_grad.simple span i.left{
+    top:-180%;
+  }
+
+  .mUI_select .mUI_grad.simple span i.right{
+    bottom:180%;
+  }
