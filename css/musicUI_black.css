@@ -1,0 +1,407 @@
+html{
+  background:url('../fond.jpg');
+}
+
+body{
+  width:55%;
+  margin:0 auto;
+}
+
+/********************
+/*group
+*********************/
+
+.musicUI_group{
+  font-size:0;
+  vertical-align:top;
+  display:inline-block;
+  margin:3px;
+  padding:4px;
+  padding-bottom:16px;
+  padding-top:18px;
+  border:1px solid #202020;
+  border-radius:5px;
+  box-shadow:1px 1px 2px rgba(55,55,55,0.5),
+  1px 1px 2px rgba(55,55,55,0.5) inset;
+  font-family:sans-serif;
+}
+
+.musicUI_discretGroup {
+  font-size:0;
+  vertical-align:top;
+  display:inline-block;
+  margin:1px;
+  padding:4px;
+  padding-bottom:16px;
+  padding-top:18px;
+  font-family:sans-serif;
+}
+
+
+.musicUI_group h2{
+  text-align:center;
+  text-transform:uppercase;
+  font-size:16px;
+  margin:0;
+  margin-bottom:12px;
+  color:#202020;
+  text-shadow:1px 1px 0 rgba(55,55,55,0.8),
+  -1px -1px 0 rgba(5,5,5,0.6);
+}
+
+
+.musicUI_discretGroup h2{
+  text-align:center;
+  font-size:12px;
+  margin:8px 0;
+  color:#202020;
+  text-shadow:1px 1px 0 rgba(55,55,55,0.5),
+  -1px -1px 0 rgba(5,5,5,0.4);
+}
+
+/*************************
+  kontrol wrapper
+*/
+
+/***************************************** Range
+/******************************************** knob*/
+/*wrapper*/
+
+.mUI_knob.mUI_wrapper{
+  font-size:0;
+  position:relative;
+  display:inline-block;
+  width:50px;
+  height:50px;
+  background:none;
+  margin:8px;
+}
+
+.mUI_knob.mUI_wrapper::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:80%;
+  height:80%;
+  transform:translate(-50%,-50%);
+  border-radius:100%;
+  background-color: #313131;
+  border-radius:100%;
+  background-position: center;
+  box-shadow:1px 1px 5px black,
+  0px 1px 1px hsl(0, 0%, 35%) inset;
+}
+
+.mUI_knob.mUI_wrapper::after{
+  position:absolute;
+  display:block;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  content:'';
+  width:50%;
+  height:50%;
+  border-radius:100%;
+  background:none;
+  box-shadow:-1px -4px 7px hsl(0, 0%, 35%),
+  1px 2px 1px #414141 inset,
+  1px 4px 7px black,
+  -1px -2px 1px black inset;
+}
+
+/*name*/
+.mUI_knob .mUI_name{
+  position:absolute;
+  left:0;
+  display:block;
+  font-family:sans-serif;
+  position:absolute;
+  font-size:12px;
+  bottom:0;
+  width:100%;
+  padding-top:5%;
+  transform:translateY(100%);
+  text-align:center;
+  color:#121116;
+  text-shadow:1px 1px 2px rgba(55,55,55,1),
+  -1px -1px 2px rgba(0,0,0,0.1);
+}
+
+/*button*/
+.mUI_knob .mUI_button{
+  z-index:1000;
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+}
+
+.mUI_knob .mUI_button::after{
+  content:'';
+  display:block;
+  position:absolute;
+  left:50%;
+  top:12%;
+  border-radius:50%;
+  transform-origin:0 470%;
+  transform:rotate(-135deg);
+  width:5%;
+  height:8%;
+  background:hsl(0, 0%, 80%);
+}
+
+/*grad*/
+/*led*/
+.mUI_knob .mUI_grad.led span{
+  position:absolute;
+  width:8%;
+  height:8%;
+  background:#0e0e0e;
+  box-shadow:1px 1px 1px rgba(255,255,255,0.2) inset,
+  -1px -1px 1px rgba(0,0,0,0.7) inset,
+  1px 1px 1px rgba(255,255,255,0.2),
+  -1px -1px 1px rgba(0,0,0,0.7);
+  border-radius: 100%;
+  transform:translate(-50%,-50%);
+}
+
+.mUI_knob .mUI_grad.led span.active{
+  background:#b7efff;
+  box-shadow:1px 1px 1px rgba(255,255,255,0.2) inset,
+  0px 0px 8px #b7efff;
+
+}
+
+/*simple*/
+.mUI_knob .mUI_grad.simple span{
+  position:absolute;
+  width:1px;
+  height:8%;
+  background:hsl(0, 0%, 80%);
+  border-radius: 100%;
+  transform:translate(-50%,-50%);
+}
+
+.mUI_knob .mUI_grad.simple i{
+  display:inline-block;
+  font-family:sans-serif;
+  width:1px;
+  font-size:7px;
+  color:rgba(204, 204, 204, 0.6);
+  text-align:center;
+}
+
+/***************************************** Range
+/******************************************** slide*/
+/*wrapper*/
+.mUI_slide.mUI_wrapper{
+  position:relative;
+  display:inline-block;
+  width:150px;
+  height:50px;
+  background:none;
+}
+
+/*vertical*/
+.mUI_slide.mUI_wrapper.mUI_vertical{
+  width:50px;
+  height:150px;
+}
+
+.mUI_slide.mUI_wrapper::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  width:100%;
+  height:2px;
+  transform:translateY(-50%);
+  border-radius:2px;
+  background-color: #0e0e0e;
+  background-position: center;
+  box-shadow:1px 1px 5px rgba(155,155,155,0.2),
+  0px 1px 1px hsl(0, 0%, 5%) inset;
+}
+
+/*vertical*/
+.mUI_slide.mUI_wrapper.mUI_vertical::before{
+  width:2px;
+  height:100%;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/*button*/
+.mUI_slide .mUI_button{
+  z-index:1000;
+  position:absolute;
+  width:20%;
+  height:28%;
+  top:50%;
+  left:0;
+  transform:translate(-50%,-50%);
+  border-radius:3px;
+  background:#313131;
+  box-shadow:1px 1px 2px hsl(0,0%,5%),
+  1px 1px 0 rgba(155,155,155,0.1) inset,
+  5px 0px 15px hsl(0,0%,15%) inset;
+}
+.mUI_slide .mUI_button::after{
+  content:'';
+  display:block;
+  position:absolute;
+  width:1px;
+  left:50%;
+  top:2.5%;
+  height:95%;
+  background:hsl(0, 0%, 30%);
+}
+
+/*vertical*/
+.mUI_slide.mUI_vertical .mUI_button{
+  width:28%;
+  height:20%;
+  top:0;
+  left:50%;
+}
+
+.mUI_slide.mUI_vertical .mUI_button::after{
+  width:95%;
+  height:1px;
+  left:2.5%;
+  top:50%;
+}
+/*name*/
+.mUI_slide .mUI_name{
+  position:absolute;
+  left:0;
+  display:block;
+  font-family:sans-serif;
+  position:absolute;
+  font-size:12px;
+  bottom:0;
+  width:100%;
+  padding-top:0;
+
+  text-align:center;
+  color:#121116;
+  text-shadow:1px 1px 2px rgba(55,55,55,1),
+  -1px -1px 2px rgba(0,0,0,0.1);
+}
+
+.mUI_slide.mUI_vertical .mUI_name{
+  transform:translateY(100%);
+}
+/*grad*/
+/*simple*/
+.mUI_slide .mUI_grad.simple span{
+  position:absolute;
+  z-index:-1;
+  width:1px;
+  height:20%;
+  top:50%;
+  background:hsl(0, 0%, 40%);
+  border-radius: 100%;
+  transform:translate(-50%,-50%);
+}
+
+/*vertical*/
+.mUI_slide.mUI_vertical .mUI_grad.simple span{
+  height:1px;
+  width:20%;
+  left:50%;
+}
+
+.mUI_slide .mUI_grad.simple i{
+  position:absolute;
+  top:-100%;
+  transform:translate(-400%,-50%);
+  display:inline-block;
+  font-family:sans-serif;
+  width:1px;
+  font-size:7px;
+  color:rgba(204, 204, 204, 0.6);
+  text-align:center;
+}
+
+/*vertical*/
+.mUI_slide.mUI_vertical .mUI_grad.simple i{
+  top:0;
+  left:-100%;
+}
+
+.mUI_buttonWrapper{
+  position:relative;
+  display:inline-block;
+  width:45px;
+  height:25px;
+  background:black;
+}
+
+.mUI_buttonWrapper:last-of-type{
+  border-radius:0 5px 5px 0;
+}
+
+.mUI_buttonWrapper:last-of-type::before{
+  border-radius:0 5px 5px 0;
+}
+
+.mUI_buttonWrapper:first-of-type{
+  border-radius:5px 0 0 5px;
+}
+
+.mUI_buttonWrapper:first-of-type::before{
+  border-radius:5px 0 0 5px;;
+  width:94%;
+  left:50%;
+}
+
+.mUI_buttonWrapper:only-of-type{
+  border-radius:5px;
+}
+
+.mUI_buttonWrapper:only-of-type::before{
+  border-radius:5px;
+}
+
+
+.mUI_buttonWrapper.checked::before{
+  width:92%;
+  height:88%;
+  left:50%;
+  top:53%;
+  background:#21211f;
+}
+
+.mUI_buttonWrapper::before{
+  content:'';
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:96%;
+  height:90%;
+  background:#2b2b2b;
+  box-shadow:1px 1px 1px #373737 inset,-1px -1px 1px #212121 inset;
+}
+
+.mUI_buttonWrapper .mUI_name{
+  cursor:default;
+  font-family:sans-serif;
+  font-size:12px;
+  z-index:1000;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  color:#141414;
+}
+.mUI_buttonWrapper.checked .mUI_name{
+  left:51.5%;
+  top:51.5%;
+  text-shadow:0 0 13px #b6ddfe;
+  color:#b6ddfe;
+}
