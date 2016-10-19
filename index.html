@@ -15,9 +15,9 @@
       <option value="1">Verb1</option>
       <option value="2">Verb2</option>
       <option value="3">Verb3</option>
-      <option value="1">Verb1</option>
-      <option value="2">Verb2</option>
-      <option value="3">Verb3</option>
+      <option value="4">Verb1</option>
+      <option value="5">Verb2</option>
+      <option value="6">Verb3</option>
     </select>
     <input type="range">
     <input type="range" class="knob">
@@ -38,7 +38,16 @@
 
 <script src="jQuery-musicUI-plugin.js"></script>
 <script>
-  $('.musicUI_group *').musicUI();
+$(function(){
+
+  $('.musicUI_group *').musicUI().on('change',function(){
+  console.log($(this).val());
+  });
+
+
+
+})
+
 </script>
 </body>
 </html>
