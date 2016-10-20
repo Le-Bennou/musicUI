@@ -5,15 +5,20 @@
 
 (function($){
 
-  $.fn.musicUI = function(){
-
+  $.fn.musicUI = function(options){
+    var settings = $.extend({
+            // These are the defaults.
+            width: '150px',
+        }, options );
     return this.each(function(){
       var k = $(this);
-    
 
       function _createDOM(){
           k.hide();
           k.mUI.wrapper = $('<div class="mUI_wrapper '+k.mUI.class+'"></div>');
+          k.mUI.wrapper.css({
+            'width' : settings.width,
+          })
           k.mUI.button = $('<div class="mUI_button"></div>');
           k.mUI.grad = $('<div class="mUI_grad '+k.mUI.gradClass+'"></div>');
           k.mUI.wrapper.append(k.mUI.button);
@@ -23,6 +28,8 @@
             k.mUI.wrapper.append(k.mUI.nameDOM);
           }
           k.after(k.mUI.wrapper);
+          k.mUI.wrapper.css({'font-size':k.mUI.wrapper.width()/10+'px',
+        'height':k.mUI.wrapper.width()*heightProp});
       }
 
       function _eventListeners(){
@@ -31,9 +38,9 @@
       }
 
       function _updateKnob(){
-        var angle =(k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*270;
+        var angle =-137+(k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*270;
         k.mUI.button.css('transform','rotate('+angle+'deg)');
-        angle = Math.round(angle/27+1);
+        angle = Math.round((angle+137)/27+1);
         k.mUI.grad.find('span').each(function(){
           $(this).removeClass('active');
           if(k.val()-k.mUI.min===0){
@@ -85,6 +92,7 @@
       }
 
       function _initRange(){
+        heightProp = 1;
         k.mUI.update = (k.hasClass('knob'))? _updateKnob : _updateSlide;
         k.mUI.class = (k.hasClass('knob'))? 'mUI_knob' : 'mUI_slide';
         k.mUI.gradClass = (k.hasClass('led') && k.hasClass('knob'))? 'led' : 'simple';
@@ -94,6 +102,11 @@
         k.mUI.val = (k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*100;
         k.mUI.text = k.attr('name');
         k.mUI.orientation = k.attr('orientation');
+        if(k.mUI.class==='mUI_slide'){
+          heightProp = 0.5;
+          settings.width = (k.mUI.orientation && k.mUI.orientation==='vertical')? parseInt(settings.width)*heightProp : settings.width;
+          heightProp = (k.mUI.orientation && k.mUI.orientation==='vertical')? 2 :0.5;
+        }
         k.mUI.class +=' mUI_'+k.attr('orientation');
         _createDOM();
         var c;
@@ -101,8 +114,8 @@
           var led = $('<span data-n="'+c+'"></span>');
           if(k.hasClass('knob')){
             var rad = Math.PI-(-135 + (c)/(10)*270)/180*Math.PI;
-            led.css({'top':50+(Math.cos(rad)*50) +'%',
-              'left':50+(Math.sin(rad)*50 )+'%' });
+            led.css({'top':Math.round(50+(Math.cos(rad)*40)) +'%',
+              'left':Math.round(50+(Math.sin(rad)*40 ))+'%' });
             if(!k.hasClass('led')){
                 led.css('transform','translate(-50%,-50%) rotate('+(-rad)+'rad)');
                 if( c === 0 || c===10){
@@ -135,22 +148,18 @@
 
       function _selectUpdate(){
         k.mUI.choice = k.find('option:selected').index();
-        var angle = Math.PI/4+Math.PI+Math.PI*2*k.mUI.choice/k.mUI.options.length;
+        var angle =-137*Math.PI/180+ Math.PI/4+Math.PI+Math.PI*2*k.mUI.choice/k.mUI.options.length;
         k.mUI.button.css({'transform':'rotate('+angle+'rad)'});
-        k.mUI.grad.find('span').removeClass('active');
-        k.mUI.options[k.mUI.choice].dom.addClass('active');
+        k.mUI.grad.find('div *').removeClass('active');
+        k.mUI.options[k.mUI.choice].dom.find('*').addClass('active');
       }
 
       function _initSelect(){
-        k.hide();
-        k.mUI.wrapper = $('<div class="mUI_wrapper mUI_knob mUI_select"></div>');
-        k.mUI.button = $('<div class="mUI_button"></div>');
-        k.mUI.grad = $('<div class="mUI_grad"></div>');
-        k.mUI.grad.addClass((k.hasClass('led')? 'led' : 'simple'));
-        k.mUI.wrapper.append(k.mUI.button);
-        k.mUI.wrapper.append(k.mUI.grad);
+        //k.hide();
+        k.mUI.class='mUI_knob mUI_select';
         k.mUI.update = _selectUpdate;
-        k.after(k.mUI.wrapper);
+        _createDOM();
+        k.mUI.grad.addClass((k.hasClass('led')? 'led' : 'simple'));
         k.mUI.options = [];
         k.mUI.choice = 0;//TODO le choix fonction de l'option par defaut du HTML
         var count = 0;
@@ -159,18 +168,30 @@
         k.find('option').each(function(){
           var dClass = (360*count/nbTot>=0 && 360*count/nbTot<=90 || 360*count/nbTot>270)? 'left' : 'right';
           dClass += (360*count/nbTot>0 && 360*count/nbTot<=180)? ' bottom' : ' top';
-          k.mUI.options.push({name:$(this).html(), value : $(this).attr('value'),dom:$('<span><i class="'+dClass+'">'+$(this).html()+'</i><span>')});
+          k.mUI.options.push({name:$(this).html(), value : $(this).attr('value'),dom:$('<div><span></span><i class="'+dClass+'">'+$(this).html()+'</i></div>')});
           var d = k.mUI.options[k.mUI.options.length-1].dom;
+          //TODO régler le problème d'affichage des choix du select
           if(!k.hasClass('led')){
-              d.css('transform','translate(-50%,-50%) rotate('+(Math.PI/2+Math.PI*2*count/nbTot)+'rad)');
-              d.find('i').css({'transform':'rotate('+(-Math.PI/2-Math.PI*2*count/nbTot)+'rad)'});
+              d.find('span').css('transform','translate(-50%,-50%) rotate('+(Math.PI/2+Math.PI*2*count/nbTot)+'rad)');
+              //d.find('i').css({'transform':' rotate('+( (-Math.PI/2-Math.PI*2*count/nbTot)/4)+'rad) '});
             }
           k.mUI.grad.append(d);
-            d.css({'left':50+Math.cos(Math.PI*2*count/nbTot)*50+'%',
-        'top':50+Math.sin(Math.PI*2*count/nbTot)*50+'%'});
+            d.css({'left':50+Math.cos(Math.PI*2*count/nbTot)*38+'%',
+        'top':50+Math.sin(Math.PI*2*count/nbTot)*38+'%'});
         count++;
-
+          k.mUI.grad.find('i').each(function(){
+          })
         });
+
+        //compute space
+        var l=100000,r=0;
+        k.mUI.wrapper.find('i').each(function(){
+          l = (l>$(this).position().left)? $(this).position().left : l;
+console.log('left :' +l);
+          r = (r<$(this).position().left+$(this).width())? $(this).position().left+$(this).width() : r;
+          console.log('right :' +r);
+        });
+          k.mUI.wrapper.css({'margin':'0 '+r+'px 0 '+Math.abs(l)+'px'});
         _eventListeners();
         _selectEvents();
       }
@@ -214,6 +235,7 @@
       }
 
       function _initButton(){
+        heightProp = 0.7;
         k.mUI.on = false;
         k.mUI.update = (k.attr('type')==='radio' || k.attr('type')==='checkbox')? _checkUpdate : _buttonUpdate;
         k.mUI.change = _checkChange;
@@ -232,7 +254,27 @@
         _checkEventListener();
       }
 
+      function _vuUpdate(){
+
+        var angle = -45+(k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*90;
+
+        k.mUI.button.css('transform','rotate('+angle+'deg)');
+      }
+
+      function _initMeter(){
+        k.mUI.class = 'mUI_vu';
+        _createDOM();
+        k.mUI.wrapper.append('<svg width="100%" height="100%" viewbox="0 0 100 100"><path class="line" d="M0,45 C25,38 75,38 100,45" /></svg>');
+        k.mUI.button.append('<svg width="100%" height="100%"><line x1="50%" y1="93%" x2="50%" y2="35%" style="stroke:rgb(0,0,0);stroke-width:3" /><line x1="50%" y1="35%" x2="50%" y2="25%" style="stroke:rgb(0,0,0);stroke-width:1" /></svg>')
+        k.mUI.update = _vuUpdate;
+        k.mUI.min = k.attr('min') || k.attr('low') || 0;
+        k.mUI.max = k.attr('max') || k.attr('high') || 100;
+        _eventListeners();
+      }
+
+
       //init
+      var heightProp = 1;
       k.mUI = {};
       k.mUI.d=$(document);
       k.mUI.pos = {x:0,y:0};
@@ -256,6 +298,9 @@
         break;
         case "SELECT":
           _initSelect();
+        break;
+        case "METER":
+          _initMeter();
         break;
       }
 
