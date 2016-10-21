@@ -65,18 +65,28 @@ body{
   kontrol wrapper
 */
 
+.mUI_kontrol{
+  position:relative;
+  display:inline-block;
+    box-sizing: border-box;
+}
+
 /***************************************** Range
 /******************************************** knob*/
 /*wrapper*/
+.mUI_wrapper{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  padding:0;
+  margin:0;
+}
 
 .mUI_knob.mUI_wrapper{
   font-size:0;
-  position:relative;
   display:inline-block;
-  width:150px;
-  height:150px;
   background:none;
-  margin:8px;
   font-size:14px;
 }
 
@@ -120,7 +130,7 @@ body{
   display:block;
   font-family:sans-serif;
   position:absolute;
-  font-size:1.5em;
+  font-size:1em;
   bottom:0;
   width:100%;
   padding-top:5%;
@@ -198,7 +208,7 @@ body{
   display:inline-block;
   font-family:sans-serif;
   width:1px;
-  font-size:1em;
+  font-size:0.7em;
   color:rgba(204, 204, 204, 0.6);
   text-align:center;
 }
@@ -207,12 +217,7 @@ body{
 /******************************************** slide*/
 /*wrapper*/
 .mUI_slide.mUI_wrapper{
-  position:relative;
-  display:inline-block;
-  width:150px;
-  height:50px;
   background:none;
-
 }
 
 /*vertical*/
@@ -291,7 +296,7 @@ body{
   display:block;
   font-family:sans-serif;
   position:absolute;
-  font-size:1em;
+  font-size:0.2em;
   bottom:0;
   width:100%;
   padding-top:0;
@@ -348,29 +353,29 @@ body{
   background:black;
 }
 
-.mUI_buttonWrapper:last-of-type{
+.mUI_kontrol:last-of-type .mUI_buttonWrapper{
   border-radius:0 5px 5px 0;
 }
 
-.mUI_buttonWrapper:last-of-type::before{
+.mUI_kontrol:last-of-type .mUI_buttonWrapper::before{
   border-radius:0 5px 5px 0;
 }
 
-.mUI_buttonWrapper:first-of-type{
+.mUI_kontrol:first-of-type .mUI_buttonWrapper{
   border-radius:5px 0 0 5px;
 }
 
-.mUI_buttonWrapper:first-of-type::before{
+.mUI_kontrol:first-of-type .mUI_buttonWrapper::before{
   border-radius:5px 0 0 5px;;
   width:94%;
   left:50%;
 }
 
-.mUI_buttonWrapper:only-of-type{
+.mUI_kontrol:only-of-type .mUI_buttonWrapper{
   border-radius:5px;
 }
 
-.mUI_buttonWrapper:only-of-type::before{
+.mUI_kontrol:only-of-type .mUI_buttonWrapper::before{
   border-radius:5px;
 }
 
@@ -470,11 +475,7 @@ body{
   vumetre
 */
 .mUI_wrapper.mUI_vu{
-  position:relative;
   background:#eed593;
-  width:190px;
-  height:110px;
-  display:inline-block;
   box-shadow:3px 8px 12px rgba(0,0,0,0.4) inset;
 }
 
@@ -524,9 +525,7 @@ position:absolute;
   transition:transform 0.04s ease-in-out;
 }
 .mUI_wrapper.mUI_ledmeter{
-  position:relative;
   display:inline-block;
-  margin:4px;
 }
 
 
@@ -535,4 +534,11 @@ position:absolute;
     stroke: #000;
     stroke-linecap: round;
     fill: none;
+}
+
+.debugH{
+  position:absolute;
+  height:100%;
+  width:1px;
+  background:red;
 }

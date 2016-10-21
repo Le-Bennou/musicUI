@@ -3,12 +3,12 @@
 ////TODO grad affihcées en logarythm
 //TODO revoir le centrage des boutons
 //TODO mieux gérer les tailles, la taille de base doit défnir le côté pour un carré, la hauteur pour du paysage et la largeur pour du portrait....
-//FIXME le changement de settigns.size (un peu partout), se répercute sur les suivant.
+
 //FIXME les graduations des range en slide déconnent (led à la place).
 
 (function($){
-
   var led =function(options){
+    console.log('appel led');
       var settings = $.extend({
         size : 4
       },options);
@@ -25,19 +25,30 @@
   };
 
   $.fn.musicUI = function(options){
-    var settings = $.extend({
-            // These are the defaults.
-            width: '150px',
-        }, options );
     return this.each(function(){
       var k = $(this);
-
+      var settings = $.extend({
+              // These are the defaults.
+              width: k.width(),
+              height: k.height(),
+          }, options );
       function _createDOM(){
           k.hide();
+          k.mUI.kontrol = $('<div class="mUI_kontrol"></div>');
           k.mUI.wrapper = $('<div class="mUI_wrapper '+k.mUI.class+'"></div>');
-          k.mUI.wrapper.css({
+          k.mUI.kontrol.css({
             'width' : settings.width,
+            'height' : settings.height,
+            'font-size':(settings.width>settings.height)? settings.height: settings.width/5
           })
+
+            k.mUI.wrapper.css({
+              'width' : (!k.mUI.square)? settings.width : (settings.width>settings.height)? settings.height: settings.width,
+              'height' : (!k.mUI.square)? settings.height : (settings.width>settings.height)? settings.height: settings.width,
+            });
+
+
+          k.mUI.kontrol.append(k.mUI.wrapper);
           k.mUI.button = $('<div class="mUI_button"></div>');
           k.mUI.grad = $('<div class="mUI_grad '+k.mUI.gradClass+'"></div>');
           k.mUI.wrapper.append(k.mUI.button);
@@ -46,9 +57,7 @@
             k.mUI.nameDOM = $('<div class="mUI_name">'+k.mUI.text+'</div>');
             k.mUI.wrapper.append(k.mUI.nameDOM);
           }
-          k.after(k.mUI.wrapper);
-          k.mUI.wrapper.css({'font-size':k.mUI.wrapper.width()/10+'px',
-        'height':k.mUI.wrapper.width()*heightProp});
+          k.after(k.mUI.kontrol);
       }
 
       function _eventListeners(){
@@ -122,6 +131,7 @@
         heightProp = 1;
         k.mUI.update = (k.hasClass('knob'))? _updateKnob : _updateSlide;
         k.mUI.class = (k.hasClass('knob'))? 'mUI_knob' : 'mUI_slide';
+        k.mUI.square = (k.hasClass('knob'));
         k.mUI.gradClass = (k.hasClass('led') && k.hasClass('knob'))? 'led' : 'simple';
         k.mUI.min = (k.attr('min'))? parseInt(k.attr('min')) : 0;
         k.mUI.max = (k.attr('max'))? parseInt(k.attr('max')) : 100;
@@ -129,11 +139,11 @@
         k.mUI.val = (k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*100;
         k.mUI.text = k.attr('name');
         k.mUI.orientation = k.attr('orientation');
-        if(k.mUI.class==='mUI_slide'){
+      /*  if(k.mUI.class==='mUI_slide'){
           heightProp = 0.5;
           settings.width = (k.mUI.orientation && k.mUI.orientation==='vertical')? parseInt(settings.width)*heightProp : settings.width;
           heightProp = (k.mUI.orientation && k.mUI.orientation==='vertical')? 2 :0.5;
-        }
+        }*/
         k.mUI.class +=' mUI_'+k.attr('orientation');
         _createDOM();
         k.mUI.leds =[];
@@ -143,6 +153,7 @@
           if(k.hasClass('led')){
             k.mUI.leds[c] = led({color:'green'});
           }else{
+
             k.mUI.leds[c] = $('<span data-n="'+c+'"></span>');
           }
           if(k.hasClass('knob')){
@@ -162,7 +173,7 @@
               if( c === 0 || c===10){
                 k.mUI.leds[c].html('<i>'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
               }
-          k.mUI.grad.append(led);
+          k.mUI.grad.append(k.mUI.leds[c]);
         }
       }
         _rangeEventListeners();
@@ -190,9 +201,9 @@
       }
 
       function _initSelect(){
-        //k.hide();
         k.mUI.class='mUI_knob mUI_select';
         k.mUI.update = _selectUpdate;
+        k.mUI.square = true;
         _createDOM();
         k.mUI.grad.addClass((k.hasClass('led')? 'led' : 'simple'));
         k.mUI.options = [];
@@ -221,10 +232,16 @@
         //compute space
         var l=100000,r=0;
         k.mUI.wrapper.find('i').each(function(){
-          l = (l>$(this).position().left)? $(this).position().left : l;
-          r = (r<$(this).position().left+$(this).width())? $(this).position().left+$(this).width() : r;
+          var a = $(this).offset().left-k.mUI.kontrol.offset().left+$(this).width();
+          r = (r<a)? a :r;
         });
-          k.mUI.wrapper.css({'margin':'0 '+r+'px 0 '+Math.abs(l)+'px'});
+        var d = $('<div class="debugH"></div>');
+        d.css({
+          'left' : parseInt(r),
+        })
+        k.mUI.kontrol.append(d);//INFO le trait rouge arrive au bon endroit mais problème de math pour tout bien caler
+        //k.mUI.kontrol.css('width',r);
+          //k.mUI.wrapper.css({'margin':'0 '+r+'px 0 '+Math.abs(l)+'px'});
         _eventListeners();
         _selectEvents();
       }
