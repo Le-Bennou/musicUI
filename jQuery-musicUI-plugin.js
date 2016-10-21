@@ -2,8 +2,27 @@
 //FIXME EDGE ,n'affiche pas les grad sur les slider
 ////TODO grad affihcées en logarythm
 //TODO revoir le centrage des boutons
+//TODO mieux gérer les tailles, la taille de base doit défnir le côté pour un carré, la hauteur pour du paysage et la largeur pour du portrait....
+//FIXME le changement de settigns.size (un peu partout), se répercute sur les suivant.
+//FIXME les graduations des range en slide déconnent (led à la place).
 
 (function($){
+
+  var led =function(options){
+      var settings = $.extend({
+        size : 4
+      },options);
+
+      var ledBack = $('<div class="mUI_led"></div>');
+      ledBack.css({'width':settings.size,'height':settings.size});
+      ledBack.css({'left':settings.left,'top':settings.top});
+      settings.color = settings.color || 'lightblue';
+      ledBack.append('<div class="mUI_ledLight '+settings.color+'"></div>');
+      ledBack.control = function(v){
+        this.find('.mUI_ledLight').css({'opacity':v});
+      };
+      return ledBack;
+  };
 
   $.fn.musicUI = function(options){
     var settings = $.extend({
@@ -37,10 +56,18 @@
         k.mUI.update();
       }
 
+/**** Range */
+
       function _updateKnob(){
         var angle =-137+(k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*270;
         k.mUI.button.css('transform','rotate('+angle+'deg)');
         angle = Math.round((angle+137)/27+1);
+        if (k.hasClass('led')){
+          var c;
+          for (c = 0 ; c<11; c++){
+            k.mUI.leds[c].control((k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*11-c);
+          }
+        }
         k.mUI.grad.find('span').each(function(){
           $(this).removeClass('active');
           if(k.val()-k.mUI.min===0){
@@ -109,31 +136,39 @@
         }
         k.mUI.class +=' mUI_'+k.attr('orientation');
         _createDOM();
+        k.mUI.leds =[];
         var c;
         for(c=0;c<11;c++){
-          var led = $('<span data-n="'+c+'"></span>');
+
+          if(k.hasClass('led')){
+            k.mUI.leds[c] = led({color:'green'});
+          }else{
+            k.mUI.leds[c] = $('<span data-n="'+c+'"></span>');
+          }
           if(k.hasClass('knob')){
             var rad = Math.PI-(-135 + (c)/(10)*270)/180*Math.PI;
-            led.css({'top':Math.round(50+(Math.cos(rad)*40)) +'%',
+            k.mUI.leds[c].css({'top':Math.round(50+(Math.cos(rad)*40)) +'%',
               'left':Math.round(50+(Math.sin(rad)*40 ))+'%' });
             if(!k.hasClass('led')){
-                led.css('transform','translate(-50%,-50%) rotate('+(-rad)+'rad)');
+                k.mUI.leds[c].css('transform','translate(-50%,-50%) rotate('+(-rad)+'rad)');
                 if( c === 0 || c===10){
-                  led.html('<i style="display:block;transform:translateY(7px) rotate('+rad+'rad) translateX(-3px)">'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
+                  k.mUI.leds[c].html('<i style="display:block;transform:translateY(7px) rotate('+rad+'rad) translateX(-3px)">'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
                 }
             }
-            k.mUI.grad.append(led);
+            k.mUI.grad.append(k.mUI.leds[c]);
         }else{
           var pos = c*8;
-          led.css((k.mUI.orientation)? 'top':'left',10+( (k.mUI.orientation)? 80-pos: pos)+'%');
+          k.mUI.leds[c].css((k.mUI.orientation)? 'top':'left',10+( (k.mUI.orientation)? 80-pos: pos)+'%');
               if( c === 0 || c===10){
-                led.html('<i>'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
+                k.mUI.leds[c].html('<i>'+(k.mUI.min+(c/10*(k.mUI.max-k.mUI.min)))+'</i>');
               }
           k.mUI.grad.append(led);
         }
       }
         _rangeEventListeners();
       }
+
+/*** Select */
 
       function _selectEvents(){
         k.mUI.wrapper.bind('click.k',function(e){
@@ -187,9 +222,7 @@
         var l=100000,r=0;
         k.mUI.wrapper.find('i').each(function(){
           l = (l>$(this).position().left)? $(this).position().left : l;
-console.log('left :' +l);
           r = (r<$(this).position().left+$(this).width())? $(this).position().left+$(this).width() : r;
-          console.log('right :' +r);
         });
           k.mUI.wrapper.css({'margin':'0 '+r+'px 0 '+Math.abs(l)+'px'});
         _eventListeners();
@@ -199,6 +232,8 @@ console.log('left :' +l);
       function _buttonUpdate(){
 
       }
+
+/**** Check */
 
       function _checkUpdate(){
         if (k.attr('checked')){
@@ -234,6 +269,8 @@ console.log('left :' +l);
         });
       }
 
+/*** Button  */
+
       function _initButton(){
         heightProp = 0.7;
         k.mUI.on = false;
@@ -254,6 +291,8 @@ console.log('left :' +l);
         _checkEventListener();
       }
 
+/**** Meter **/
+
       function _vuUpdate(){
 
         var angle = -45+(k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*90;
@@ -261,14 +300,58 @@ console.log('left :' +l);
         k.mUI.button.css('transform','rotate('+angle+'deg)');
       }
 
-      function _initMeter(){
-        k.mUI.class = 'mUI_vu';
-        _createDOM();
+      function _meterLedUpdate(){
+        var c;
+        for (c = 0; c<15; c++){
+          k.mUI.leds[c].control( (k.val()-k.mUI.min)/(k.mUI.max-k.mUI.min)*15-c);
+        }
+      }
+
+      function _initMeterVu(){
         k.mUI.wrapper.append('<svg width="100%" height="100%" viewbox="0 0 100 100"><path class="line" d="M0,45 C25,38 75,38 100,45" /></svg>');
         k.mUI.button.append('<svg width="100%" height="100%"><line x1="50%" y1="93%" x2="50%" y2="35%" style="stroke:rgb(0,0,0);stroke-width:3" /><line x1="50%" y1="35%" x2="50%" y2="25%" style="stroke:rgb(0,0,0);stroke-width:1" /></svg>')
         k.mUI.update = _vuUpdate;
+
+      }
+
+      function _initMeterLed(){
+        k.mUI.update = _meterLedUpdate;
+        var c;
+        k.mUI.leds = [];
+        for (c = 0; c<15; c++){
+          var col = 'green';
+          if(c>=10){
+            col = 'orange';
+          }
+          if(c>12){
+            col = 'red';
+          }
+          var top =(k.mUI.vertical)? 100-c/15*100+'%' : '50%';
+          var left =(k.mUI.vertical)? '50%' : c/15*100+'%' ;
+          var size = (k.mUI.vertical)? k.mUI.wrapper.height()/20 :k.mUI.wrapper.width()/20;
+          k.mUI.leds[c] = led({size:size,color:col,left:left,top:top})
+          k.mUI.wrapper.append(k.mUI.leds[c]);
+        }
+      }
+
+      function _initMeter(){
+        k.mUI.class = (k.hasClass('vu'))? 'mUI_vu' : 'mUI_ledmeter';
+        k.mUI.orientation = k.attr('orientation');
+        heightProp = 0.5;
+        settings.width = (k.mUI.orientation && k.mUI.orientation==='vertical')? parseInt(settings.width)*heightProp : settings.width;
+        heightProp = (k.mUI.orientation && k.mUI.orientation==='vertical')? 2 :0.5;
+
+        k.mUI.vertical = (k.attr('orientation') && k.attr('orientation')==='vertical');
         k.mUI.min = k.attr('min') || k.attr('low') || 0;
         k.mUI.max = k.attr('max') || k.attr('high') || 100;
+        _createDOM();
+
+        if(k.hasClass('vu')){
+          _initMeterVu();
+        }else{
+          _initMeterLed();
+        }
+
         _eventListeners();
       }
 

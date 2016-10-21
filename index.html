@@ -17,9 +17,10 @@
 
   <div class="musicUI_group">
     <div class="musicUI_discretGroup">
-    <meter id="vu" class="vu" min="0" max="100" value="50"></meter>
+    <meter class="vul"  min="0" max="100" value="50" ></meter>
+    <meter class="vul"  min="0" max="100" value="50" ></meter>
     <div class="musicUI_discretGroup">
-      <input name="Low"  class="knob" type="range" min="0" max="100" value="20">
+      <input name="Low"   type="range" min="0" max="100" value="20">
       <input name="Med." class="knob" type="range" min="0" max="100" value="50" >
       <input name="High" class="knob" type="range" min="0" max="100" value="70">
     </div>
@@ -47,7 +48,7 @@
 
 </div>
 
-<div id="test" style="position:relative;height:200px;">
+<div id="test" style="position:relative;height:80px;">
 
 </div>
 
@@ -62,30 +63,17 @@
 <script>
 $(function(){
 
-  var c;
-  var l =[];
-  for (c= 0; c<10;c++){
-    var color = (c<6)? 'green' : (c<8)? 'orange' : 'red';
-    l.push(led({size:5,left:12*c+'px',color:color}));
-  }
-  $('#test').append(l);
-  $('input[name=Low]').on('input',function(){
-    var v= $(this).val()/10;
+  $('.musicUI_group *').musicUI({width:'80px'});
 
-    for (c= 0; c<10;c++){
-      l[c].control(v-c)
-    }
+    //  $('#test2').append(grad({angle:200,text:'autre',size:30,left:50+10*Math.cos(Math.PI*2/11*c)+'%',top:50+10*Math.sin(Math.PI*2/11*c)+'%'}));
+var count =0;
+function anim(){
+  count += 0.1;
+  $('.vul').val(30+Math.abs(Math.cos(count+Math.random()/2*Math.cos(count+Math.random()/2)))*70).change();
 
-
-})
-    for (c=0;c<11;c++){
-      $('#test2').append(grad({angle:360/11*c,text:'autre',size:30,left:50+10*Math.cos(Math.PI*2/11*c)+'%',top:50+10*Math.sin(Math.PI*2/11*c)+'%'}));
-    }
-
-  $('#test2').css({
-    'width':160,
-    'height':160
-  })
+  requestAnimationFrame(anim);
+}
+anim();
 });
 </script>
 </body>

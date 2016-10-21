@@ -523,6 +523,12 @@ position:absolute;
   transform-origin:center bottom;
   transition:transform 0.04s ease-in-out;
 }
+.mUI_wrapper.mUI_ledmeter{
+  position:relative;
+  display:inline-block;
+  margin:4px;
+}
+
 
 .mUI_wrapper.mUI_vu path {
     stroke-width:1;

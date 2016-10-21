@@ -1,23 +1,31 @@
-var led =function(options){
-    var ledBack = $('<div class="mUI_led"></div>');
-    ledBack.css({'width':options.size,'height':options.size});
-    ledBack.css({'left':options.left,'top':options.top});
-    options.color = options.color || 'lightblue';
-    ledBack.append('<div class="mUI_ledLight '+options.color+'"></div>');
-    ledBack.control = function(v){
-      this.find('.mUI_ledLight').css({'opacity':v});
-    };
-    return ledBack;
-};
+
 
 var grad = function(options){
-  var gradBack = $('<div class="mUI_graduation"></div>');
   options.size = options.size || 12;
   options.angle = options.angle%360 || 0;
+
+  //calcul de la taille nécessaire à la div grad
+  $('body').append('<div id="textTaille"><span class="mUI_gradtext">'+options.text+'</span></div>');
+
+
+  var textWidth = $('.mUI_gradtext').width();
+  var textHeight = $('.mUI_gradtext').height();
+  $('#textTaille').remove();
+
+  var lineWidth = Math.abs(options.size*Math.cos(options.angle*Math.PI/180));
+  var lineHeight =Math.abs(options.size*Math.sin(options.angle*Math.PI/180));
+
+  var gradWidth = textWidth+lineWidth;
+  var gradHeight = (options.angle>180)? lineHeight+textHeight : (lineHeight>textHeight)? lineHeight :textHeight;
+
+  var gradBack = $('<div class="mUI_graduation"></div>');
+
   gradBack.append('<span class="mUI_gradline" ><span class="mUI_gradtext">'+options.text+'</span></span>');
   gradBack.css({
     'left':options.left,
-    'top':options.top
+    'top':options.top,
+    'width' : gradWidth,
+    'height':gradHeight
   });
   var org ='right bottom';
   var left = 0;
