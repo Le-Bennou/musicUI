@@ -7,8 +7,11 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <link rel="stylesheet" href="css/musicUI_black.css">
+  <link rel="stylesheet" href="css/led.css">
+  <link rel="stylesheet" href="css/grad.css">
   <link rel="stylesheet" href="css/font-awesome.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="led.js"></script>
 </head>
 <body>
 
@@ -44,33 +47,46 @@
 
 </div>
 
+<div id="test" style="position:relative;height:200px;">
+
+</div>
+
+<div id="test2" style="position:relative;display:inline-block;border:1px solid red">
+
+</div>
+
+
+
+
 <script src="jQuery-musicUI-plugin.js"></script>
 <script>
 $(function(){
-  $('.musicUI_group input[type=range]').musicUI({width:'60px'});
-  $('.musicUI_group input[type=radio]').musicUI({width:'40px'});
-$('select').musicUI({width:'80px'});
-$('meter').musicUI();
-var count = 0;
-var volume = 0;
 
-$('input[name="Low"]').on('change',function(){
-  volume=  $(this).val()/100;
-})
-function anime(){
-  var val = 0;
-  if($('#r2').val()==='true'){
-    val = ($('#r2').val())? 80+20*(Math.sin(count+Math.random()/5)+Math.cos(-count*8)/10+Math.random()) : 0;
-  };
+  var c;
+  var l =[];
+  for (c= 0; c<10;c++){
+    var color = (c<6)? 'green' : (c<8)? 'orange' : 'red';
+    l.push(led({size:5,left:12*c+'px',color:color}));
+  }
+  $('#test').append(l);
+  $('input[name=Low]').on('input',function(){
+    var v= $(this).val()/10;
 
-  $('#vu').val(volume*val).change();
-  count +=0.1;
-  requestAnimationFrame(anime);
-}
-anime();
+    for (c= 0; c<10;c++){
+      l[c].control(v-c)
+    }
+
 
 })
+    for (c=0;c<11;c++){
+      $('#test2').append(grad({angle:360/11*c,text:'autre',size:30,left:50+10*Math.cos(Math.PI*2/11*c)+'%',top:50+10*Math.sin(Math.PI*2/11*c)+'%'}));
+    }
 
+  $('#test2').css({
+    'width':160,
+    'height':160
+  })
+});
 </script>
 </body>
 </html>
